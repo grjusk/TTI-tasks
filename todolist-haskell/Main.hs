@@ -49,8 +49,8 @@ help ev = do
     putStrLn "   ∫ remember the event indexes you want to remove"
     putStrLn "   ∫ enter the desired indexes (separate by a comma, as example: 1,3,5)"
     putStrLn "   ∫ enter '0' to remove all events"
-    putStrLn "   ∫ then you must confirm your choice\n"
-    putStrLn "   ∫ enter 'y' if you want to remove events, otherwise 'n' (small or big letter - no matter)"
+    putStrLn "   ∫ then you must confirm your choice"
+    putStrLn "   ∫ enter 'y' if you want to remove events, otherwise 'n' (small or big letter - no matter)\n"
     putStrLn "   ≈ if the delimeter is not a comma then will be shown the following message: The delimeter is not a comma..."
     putStrLn "   ≈ if the format is not what is specified or/and the string contains unresolved characters "
     putStrLn "     ≈ (like: -,:,a, etc.) then: The string contains unresolved characters..." 
@@ -59,13 +59,22 @@ help ev = do
     putStrLn "   ≈ if the answer is 'y' then: Successfully removed"
     putStrLn "   ≈ otherwise: Was not removed\n"
     putStrLn "4. Import"
+    putStrLn "   ∫ first of all you should enter the name of the file (any allowed characters for file naming in unix)"
+    putStrLn "   ∫ then you must confirm your choice"
+    putStrLn "   ∫ enter 'y' if you want to import events, otherwise 'n' (small or big letter - no matter)\n"
+    putStrLn "   ≈ if the answer is 'y' then will be shown the following message: Successfully imported" 
+    putStrLn "   ≈ otherwise: Was not imported"   
+    putStrLn "   ≈ if the file is empty you will not be able to import its contents (it is logical)"
+    putStrLn "   ≈ if the file structure is not what is specified or/and the file contains unresolved characters"
+    putStrLn "     ≈ then will be shown the following message: Something went wrong, check the file\n"
+    putStrLn "   !!! import process will remove all actual events, be careful\n"
     putStrLn "5. Export"
     putStrLn "   ∫ first of all you should enter the name of the file (any allowed characters for file naming in unix)"
     putStrLn "   ∫ then you must confirm your choice"
     putStrLn "   ∫ enter 'y' if you want to export events, otherwise 'n' (small or big letter - no matter)\n"
     putStrLn "   ≈ if the answer is 'y' then will be shown the following message: Successfully exported"
     putStrLn "   ≈ otherwise: Was not exported"
-    putStrLn "   ≈ if events list is empty you will not be able to export them (it is logical)"
+    putStrLn "   ≈ if events list is empty you will not be able to export them (it is logical)\n"
     putStrLn "   !!! if such file already exists, it will be replaced by a new one\n"
     putStrLn "6. Help"
     putStrLn "   ∫ there is nothing to say...\n"
@@ -197,13 +206,14 @@ imprt :: [Event] -> IO ()
 imprt ev = do
     putStrLn "File name: "
     file <- getLine
-    putStrLn ("do you want to import all events from the file '"
-        ++ file ++ "'' ? (y/n)")    
-    yn <- getLine
     clearScreen
     fileExists <- doesFileExist file
     if fileExists
-    then do 
+    then do
+        putStrLn ("do you want to import all events from the file '"
+            ++ file ++ "'' ? (y/n)")    
+        yn <- getLine
+        clearScreen
         if (head yn == 'Y') || (head yn == 'y')
         then do
             content <- readFile file
@@ -213,7 +223,8 @@ imprt ev = do
                 finish ev ""
             else do
                 let str = splt (fst (splitAt (length content - 2) content))
-                let evs = importF str
+                let str1 = splt content
+                let evs = importF str1
                 if length evs == 0
                 then do
                     putStrLn "Something went wrong, check the file"
